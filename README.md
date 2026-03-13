@@ -14,7 +14,7 @@ The geometry is defined using a mask_matrix which acts as a blueprint for the so
 * **Label 1:** Air/Vacuum (Laplacian Stencil: $\nabla^2 V = 0$)
 * **Label 2:** Plate 1 (Charged Electrode)
 * **Label 3:** Plate 2 (Grounded/Reference Electrode)
-* 
+  
 * Note: Plate electrodes **can** be added if you modify object_index array.
 
 ### 3. Computational Efficiency
