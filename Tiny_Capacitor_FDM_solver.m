@@ -43,5 +43,5 @@ b_vect(N^2,1) = 0; % B vector
 
 %% 5. POST-PROCESSING & PLOTTING (The Result)
 % Create your surf or contour plots.
-% Calculate E-field if you're feeling fancy.
+
 
