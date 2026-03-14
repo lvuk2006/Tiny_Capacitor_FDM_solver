@@ -1,4 +1,4 @@
-# Tiny_Capacitor_FDM_solver
+# Tiny Capacitor FDM solver
 This is a MATLAB based FDM solver for Electrostatic fields that can model capacitors in air or vacuum.
 
 **The Technical Architecture:**
