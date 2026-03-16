@@ -2,8 +2,14 @@
 % Define L, N, dx, and element index vars
 
 L = 1; % matrix node length
-N = 150; % Number of nodes
-dx = L/(N-1); % derivative equal to the length divided by previous row.
+
+
+%INCREASE FOR GREATER RESOLUTION
+
+N = 150; % Number of nodes 
+
+
+dx = L/(N-1); % derivative equal to the length divided by one minus row length.
 object_index = [0, NaN,  12, 0]; % Edge voltage, air voltage, plate1 voltage, Plate2 voltage
 
 
@@ -20,8 +26,28 @@ matrix = reshape(1:N^2, N, N); % Index all values on spatial matrix
 mask_matrix = zeros(N,N); % Build identity Matrix for capacitor locations
 mask_matrix(2:149,2:149) = 1; % Make air/Vacuum value 1
 
-mask_matrix(10:120,54:56) = 2; % Plate 1 value 2
-mask_matrix(10:120,60:62) = 3; % Plate 2 value 2
+
+% MODIFY THIS CODE TO MODIFY GEOMETRY OF positive plates of capacitor system
+
+%mask_matrix(10:120,54:56) = 2; % Plate 1 value 2 (Capacitor)
+mask_matrix(10:15,54:56) = 2; % Ion thruster config (value 2)
+mask_matrix(20:25,54:56) = 2;
+mask_matrix(30:35,54:56) = 2;
+mask_matrix(40:45,54:56) = 2;
+mask_matrix(50:55,54:56) = 2;
+mask_matrix(60:65,54:56) = 2;
+
+
+% MODIFY THIS CODE TO MODIFY GEOMETRY OF negative plates of capacitor system
+
+%mask_matrix(20:110,60:62) = 3; % Plate 2 value 3 (Capacitor)
+mask_matrix(10:15,60:62) = 3; % Ion thruster config (value 3)
+mask_matrix(20:25,60:62) = 3;
+mask_matrix(30:35,60:62) = 3;
+mask_matrix(40:45,60:62) = 3;
+mask_matrix(50:55,60:62) = 3;
+mask_matrix(60:65,60:62) = 3;
+
 
 
 
@@ -77,12 +103,29 @@ V_vec = A_matrix \ b_vect; % Run A=LU solver
 
 V_final = reshape(V_vec, N, N); % Reshape into final matrix from vector.
 
+V_final = real(V_final);
 
 
 %% 5. POST-PROCESSING & PLOTTING (The Result)
 % Create surf or contour plots.
-% Calculate E-field.
+% RUN THIS SECTION SPECIFICALLY FOR VOLTAGE MATRIX ONLY
+
 imagesc(V_final); 
 colorbar; 
-title('The Final Matrix');
+title('The Final Voltage Matrix');
+
+%% 6. Calculate E-field.
+%E-field gradient calculation:
+
+[Ex, Ey] = gradient(-V_final, dx); % Finds the gradient or first derivative of voltage as E = -dV/dx
+
+E_field = sqrt(Ex.^2 + Ey.^2); % Element squaring (Pytagorean)
+E_field = real(E_field);
+
+
+imagesc(E_field); 
+colorbar; 
+title('The Final E-Field Matrix');
+
+
 
