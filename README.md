@@ -1,5 +1,5 @@
 # Tiny Capacitor FDM solver
-This is a MATLAB based FDM solver for Electrostatic fields that can model capacitors in air or vacuum.
+This is a MATLAB based FDM solver for Electrostatic fields that can model capacitors and charge in air or vacuum.
 
 **The Technical Architecture:**
 
@@ -11,7 +11,7 @@ To bridge the gap between a 2D physical grid and 1D Linear Algebra, every $(i, j
 ### 2. Region Masking (Configurable Geometry)
 The geometry is defined using a mask_matrix which acts as a blueprint for the solver. This makes the program highly configurable for different capacitor shapes:
 * **Label 0:** Grounded Boundaries (Walls)
-* **Label 1:** Air/Vacuum (Laplacian Stencil: $\nabla^2 V = 0$)
+* **Label 1:** Air/Vacuum (Poisson Stencil: $\nabla^2 V = -\frac{\rho}{\epsilon}$)
 * **Label 2:** Plate 1 (Charged Electrode)
 * **Label 3:** Plate 2 (Grounded/Reference Electrode)
   
