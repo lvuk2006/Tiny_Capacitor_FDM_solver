@@ -3,6 +3,9 @@
 
 L = 1; % matrix node length
 
+% Epsilon (permittivity of vacuum)
+epsilon0 = 8.854e-12; 
+
 
 %INCREASE FOR GREATER RESOLUTION
 
@@ -20,6 +23,14 @@ matrix = zeros(N,N); % Build fundamental matrix
 matrix = reshape(1:N^2, N, N); % Index all values on spatial matrix
 
 
+rho = zeros(N, N); % Empty rho (charge density) matrix 
+
+
+% MODIFY THIS CODE TO MODIFY GEOMETRY of charges in space
+
+rho(60:70, 50:70) = 1e-9; % 1nC/square Charge in 10x10 piece of matrix (Shielded by faraday cage)
+
+
 % Make matrix for capacitor indexing differentiating between grounded
 % edges (0), air/vacuum (1), and capacitor plates (2).
 
@@ -29,24 +40,26 @@ mask_matrix(2:149,2:149) = 1; % Make air/Vacuum value 1
 
 % MODIFY THIS CODE TO MODIFY GEOMETRY OF positive plates of capacitor system
 
+mask_matrix(50:90,40:80) = 3; %Faraday cage Geometry
+mask_matrix(55:85,45:75) = 1;
 %mask_matrix(10:120,54:56) = 2; % Plate 1 value 2 (Capacitor)
-mask_matrix(10:15,54:56) = 2; % Ion thruster config (value 2)
-mask_matrix(20:25,54:56) = 2;
-mask_matrix(30:35,54:56) = 2;
-mask_matrix(40:45,54:56) = 2;
-mask_matrix(50:55,54:56) = 2;
-mask_matrix(60:65,54:56) = 2;
+%mask_matrix(10:15,54:56) = 2; % Ion thruster config (value 2)
+%mask_matrix(20:25,54:56) = 2;
+%mask_matrix(30:35,54:56) = 2;
+%mask_matrix(40:45,54:56) = 2;
+%mask_matrix(50:55,54:56) = 2;
+%mask_matrix(60:65,54:56) = 2;
 
 
 % MODIFY THIS CODE TO MODIFY GEOMETRY OF negative plates of capacitor system
 
 %mask_matrix(20:110,60:62) = 3; % Plate 2 value 3 (Capacitor)
-mask_matrix(10:15,60:62) = 3; % Ion thruster config (value 3)
-mask_matrix(20:25,60:62) = 3;
-mask_matrix(30:35,60:62) = 3;
-mask_matrix(40:45,60:62) = 3;
-mask_matrix(50:55,60:62) = 3;
-mask_matrix(60:65,60:62) = 3;
+%mask_matrix(10:15,60:62) = 3; % Ion thruster config (value 3)
+%mask_matrix(20:25,60:62) = 3;
+%mask_matrix(30:35,60:62) = 3;
+%mask_matrix(40:45,60:62) = 3;
+%mask_matrix(50:55,60:62) = 3;
+%mask_matrix(60:65,60:62) = 3;
 
 
 
@@ -69,9 +82,9 @@ b_vect = zeros(N^2, 1); % Initialize B vector with zeros for voltage.
 
 % Make sure to tell user that if there are no charged plates, the solver
 % will fail to output meaningful math.
-if max(mask_matrix(:)) < 2 
-    error('Wait! No charged plates (Label 2) found in the mask. Check your geometry.');
-end
+%if max(mask_matrix(:)) < 2 
+%    error('Wait! No charged plates (Label 2) found in the mask. Check your geometry.');
+%end
 
 % Nested For loop
 for i = 2:N-1 % For row 1 to N
@@ -84,7 +97,7 @@ for i = 2:N-1 % For row 1 to N
            A_matrix(k, k+N) = 1; 
            A_matrix(k, k-1) = 1; 
            A_matrix(k, k+1) = 1; 
-           b_vect(k) = 0;
+           b_vect(k) = -(rho(i,j)*dx^2) / epsilon0; % Note: Non-varying dx can be straight multiplication for this Poisson.
         else
            m = mask_matrix(i, j); % object_index temporary variable m
            if m ~= 1 %Condition to sort non-air objects out
